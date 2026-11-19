@@ -10,6 +10,8 @@ let in_link = false
 
 let mousePos = {x: 0, y: 0}
 
+console.log(structure)
+
 function removePrefix(str, prefix) {
   return str.startsWith(prefix) ? str.slice(prefix.length) : str;
 }
@@ -31,6 +33,7 @@ function set_move(elem) {
         
         offsetX = e.pageX - elem.offsetLeft;
         offsetY = e.pageY - elem.offsetTop;
+        elem.classList.add('actif')
     });
 
     elem.addEventListener('pointermove', e => {
@@ -50,6 +53,7 @@ function set_move(elem) {
 
     elem.addEventListener('pointerup', () => {
         actif = false
+        elem.classList.remove('actif')
         zone.querySelectorAll(`svg[data-start^="column-${removePrefix(elem.id, "table-")}"], svg[data-end^="column-${removePrefix(elem.id, "table-")}"]`).forEach(link => {
             update(link);
         })
@@ -59,14 +63,18 @@ function set_move(elem) {
 
 function addTable(name, pos) {
     if (tables.has(name)) {
-        alert('Cette table exsiste déja :(')
+        myAlert('Cette table exsiste déja :(', 'Tu ne peut pas créer 2 tables avec le même nom')
         return
     }
-    tables.add(name)
+
+    let t = {
+        id: getNewTableId(),
+        name: name
+    }
 
     const table = document.createElement('div')
     table.className = 'table'
-    table.id = `table-${name}`
+    table.id = `table-${t.id}`
     set_move(table)
     if (pos) {
         table.style.left = pos.x
@@ -87,22 +95,24 @@ function addTable(name, pos) {
     zone.appendChild(table)
 }
 
-document.getElementById('newTableButton').addEventListener('click', e => {
-    const name = prompt('Entrez le nom de la nouvelle table')
+document.getElementById('newTableButton').addEventListener('click', async e => {
+
+    const name = await myPrompt('Nouveme table', 'Entrez le nom de la nouvelle table')
+    console.log(name)
     if (name) {
         addTable(name)
     }
 })
 
-function addColumn(tableName, name=null) {
-    if (name===null) {name = prompt(`Entrez le nom de la colomne pour ${tableName} :`)};
+async function addColumn(tableName, name=null) {
+    if (name===null) {name = await myPrompt('Nouvelle colonne', `Entrez le nom de la colonne pour ${tableName} :`)};
     if (name) {
         if (document.getElementById(`column-${tableName}-${name}`)) {
-            alert('Cet colomne exsiste déjà :/')
+            myAlert('Cet colomne exsiste déjà :/', 'Tu ne peut pas créer 2 colomnes avec le même nom dans la même table')
             return
         }
 
-        const table = document.getElementById(`table-${tableName}`)
+        const table = document.getElementById(`table-0`)//${tableName}`)
 
         const before = document.createElement('div')
         before.className = 'dot before button'
@@ -226,9 +236,9 @@ function removeLink(link) {
     zone.removeChild(link)
 }
 
-function save() {
+function generateJson() {
+
     let tables = []
-    console.log('Save')
     zone.querySelectorAll('.table').forEach(table => {
         t = {
             name: removePrefix(table.id, 'table-'),
@@ -249,30 +259,148 @@ function save() {
             end: link.dataset.end
         })
     })
-    
-    localStorage.setItem('session', JSON.stringify({
+
+    return {
         tables: tables,
         links: links
-    }));
+    }
 }
 
-function erase_save() {
+function save() {
+    const json = generateJson()
+    localStorage.setItem('session', JSON.stringify(json));
+    notification('Sauvegardé dans le navigateur.')
+}
+
+function eraseSave() {
     localStorage.setItem('session', JSON.stringify({
         tables: [],
         links: []
     }));
+    zone.innerHTML = ""
+    notification('Sauvegarde éffacée.')
 }
 
-const sauv = JSON.parse(localStorage.getItem('session') || 'null')
+function loadJSON(json) {
+    zone.innerHTML = ""
+    tables = new Set()
 
-if (sauv) {
-    sauv.tables.forEach(table => {
+    json.tables.forEach(table => {
         addTable(table.name, {x:table.x, y:table.y})
 
         table.column.forEach(col => addColumn(table.name, col));
     });
 
-    sauv.links.forEach(link => {
+    json.links.forEach(link => {
         addLink(link.start, link.end)
     })
+
+}
+
+const sauv = JSON.parse(localStorage.getItem('session') || 'null')
+
+if (sauv) {
+    loadJSON(sauv)
+}
+
+function exportJSON() {
+    const json = generateJson()
+
+    const blob = new Blob([JSON.stringify(json, null, 2)], {
+        type: 'application/json',
+    });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = "export.json";
+    document.body.appendChild(a);
+    a.click();
+
+    a.remove();
+    URL.revokeObjectURL(url);
+}
+
+const importJSONInput = document.getElementById('jsonLoad')
+
+importJSONInput.addEventListener('change', () => {
+    importJSON()
+})
+
+async function importJSON() {
+    
+    const file = importJSONInput.files[0];
+    if (!file) return;
+    try {
+        const text = await file.text();
+        const data = JSON.parse(text);
+        loadJSON(data)
+    } catch (err) {
+        myAlert('JSON invalide', err.message);
+    }
+}
+
+const overlay = document.getElementById('overlay')
+const windows = document.getElementById('windows')
+const title = document.getElementById('windows-title')
+const text = document.getElementById('windows-text')
+const closeBtn = document.getElementById('windows-close')
+const input = document.getElementById('windows-input')
+
+function myAlert(titleText, content="") {
+    overlay.classList.add('actif')
+    windows.classList.add('actif')
+    title.innerText = titleText
+    text.innerText = content
+    closeBtn.innerText = "Ok"
+
+    const close = () => {
+        overlay.classList.remove('actif');
+        windows.classList.remove('actif');
+    };
+
+    closeBtn.addEventListener('click', () => close(input.value), { once: true });
+}
+
+function myPrompt(titleText, content = "") {
+    return new Promise((resolve) => {
+        overlay.classList.add('actif');
+        windows.classList.add('actif', 'prompt');
+        title.innerText = titleText;
+        closeBtn.innerText = "Valider"
+        text.innerText = content;
+        input.value = ""
+
+        const close = (value) => {
+            overlay.classList.remove('actif');
+            windows.classList.remove('actif', 'prompt');
+            resolve(value);
+        };
+
+        closeBtn.addEventListener('click', () => close(input.value), { once: true });
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') close(input.value);
+        });
+
+        const onKey = (e) => {
+            if (e.key === 'Escape') {
+                close(null);
+                document.removeEventListener('keydown', onKey);
+            }
+        };
+        document.addEventListener('keydown', onKey);
+    });
+}
+
+const notif = document.getElementById('notif')
+const icon = document.getElementById('notif-icon')
+const iconText = document.getElementById('notif-text')
+
+function notification(text, iconName='alert-circle', duration=5000) {
+    icon.src = `/res/icons/${iconName}.svg`
+    iconText.innerText = text
+    notif.classList.add('actif')
+    setTimeout(() => {
+        notif.classList.remove('actif')
+    }, duration)
 }

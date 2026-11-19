@@ -5,11 +5,64 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BddMapper</title>
     <link rel="stylesheet" href="res/css/home.css">
+    <script src="/res/js/structure.js"></script>
     <script src="/res/js/home.js" defer></script>
 </head>
 <body>
-    <div id="zone"></div>
-    <div id="newTableButton"><span>+</span></div>
-</div>   
+    <main>
+        <div id="zone"></div>
+        <div id="newTableButton">
+            <img src="res/icons/add.svg" alt="+" style="--icon-color: red;">
+        </div>
+        <div id="modScreen">
+            <label class="switch">
+                <input type="checkbox" id="screenModeInput">
+                <span class="slider round"></span>
+            </label>
+            <label for="screenModeInput">Mode capture d'écran</label>
+        </div>
+        <label for="openNavInput" id="openNav"><img src="/res/icons/chevron-left.svg" alt="" class="icon"></label>
+        <input type="checkbox" id="openNavInput">
+    </main>
+    <nav>
+        <button onclick="exportJSON()">
+            <div>
+                <img src="/res/icons/logout.svg" alt="" style="transform: rotate(-90deg);">
+                <span>Exporter les données</span>
+            </div>
+        </button>
+        <button onclick="importJSONInput.click()">
+            <div>
+                <img src="/res/icons/login.svg" alt="" style="transform: rotate(90deg);">
+                <input type="file" id="jsonLoad" accept=".json,application/json" />
+                <span>Importer des données</span>
+            </div>
+        </button>
+        <button onclick="save()">
+            <div>
+                <img src="/res/icons/archive.svg" alt="">
+                <input type="file" id="jsonLoad" accept=".json,application/json" />
+                <span>Enregistrer dans le navigateur</span>
+            </div>
+        </button>
+        <button onclick="eraseSave()">
+            <div>
+                <img src="/res/icons/alert-circle.svg" alt="">
+                <input type="file" id="jsonLoad" accept=".json,application/json" />
+                <span>Effacer la sauvegarde du navigateur</span>
+            </div>
+        </button>
+    </nav>
+    <div class="overlay" id="overlay"></div>
+    <div id="windows">
+        <h1 id="windows-title"></h1>
+        <p id="windows-text"></p>
+        <input type="text" id="windows-input">
+        <button id="windows-close">Fermer</button>
+    </div>
+    <div id="notif">
+        <img src="" alt="" id="notif-icon">
+        <span id="notif-text"></span>
+    </div>
 </body>
 </html>
