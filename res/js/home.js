@@ -74,7 +74,7 @@ function addTable(name, pos) {
 
     const table = document.createElement('div')
     table.className = 'table'
-    table.id = `table-${t.id}`
+    table.id = `table-${name}`
     set_move(table)
     if (pos) {
         table.style.left = pos.x
@@ -112,7 +112,7 @@ async function addColumn(tableName, name=null) {
             return
         }
 
-        const table = document.getElementById(`table-0`)//${tableName}`)
+        const table = document.getElementById(`table-${tableName}`)
 
         const before = document.createElement('div')
         before.className = 'dot before button'
