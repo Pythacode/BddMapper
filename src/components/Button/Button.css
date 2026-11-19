@@ -1,0 +1,40 @@
+nav button {
+  width: 298px;
+  min-width: 298px;
+  height: 50px;
+  flex: 0 0 298px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 50px;
+}
+
+nav button > span {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  gap: 5px;
+  text-align: center;
+}
+
+@media (max-width: 480px) {
+  nav button {
+    width: 218px;
+    min-width: 218px;
+    flex-basis: 218px;
+  }
+}
+
+nav button > span > span {
+  flex: 1;
+}
+
+nav button .rotate svg {
+  transform: rotate(-90deg);
+}
+
+nav button .-rotate svg {
+  transform: rotate(90deg);
+}

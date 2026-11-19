@@ -1,0 +1,82 @@
+
+.table {
+    cursor: grab;
+    position: absolute;
+    z-index: 1;
+    background-color: var(--background-color-secondary);
+    min-width: 20px;
+    min-height: 40px;
+    max-width: 100%;
+    max-height: 100%;
+    top: 50px;
+    left: 50px;
+    user-select: none;
+    border: 1px var(--foreground-color) solid;
+    border-radius: 5px;
+    text-align: center;
+    padding-bottom: 25px;
+    transition: padding-bottom 500ms;
+    touch-action: none;
+}
+
+.table.actif {
+    cursor: grabbing;
+}
+
+.addColumnButton {
+    color: var(--foreground-color);
+    border: 2px gray solid;
+    height: 20px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    transition-duration: 500ms;
+    background: transparent;
+}
+
+.addColumnButton:hover {
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.tableName {
+    color: var(--foreground-color);
+    margin: 0 10px;
+    height: 45px;
+}
+
+.table-column {
+    border-top: 1px var(--foreground-color) solid;
+    position: relative;
+    padding: 0 15px;
+}
+
+.dot {
+    border-radius: 50%;
+    height: 10px;
+    width: 10px;
+    position: absolute;
+    top: calc(50% - 5px);
+    background-color: rgb(36, 0, 0);
+    border: 1px white solid;
+    transition-duration: 500ms;
+    padding: 0;
+}
+
+.dot:hover {
+    background-color: rgb(103, 1, 1);
+    cursor: pointer;
+}
+
+.dot.actif {
+    background-color: red;
+}
+
+.dot.before {
+    left: -5px;
+}
+
+.dot.after {
+    right: -5px;
+}

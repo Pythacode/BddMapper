@@ -1,0 +1,136 @@
+#newTableButton,
+#modScreen,
+#openNav {
+  position: absolute;
+  z-index: 6;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  background-color: var(--background-color-secondary);
+  box-shadow: 0 0 10px 0.5px var(--foreground-color);
+  cursor: pointer;
+  transition: right 500ms, box-shadow 500ms;
+}
+
+#newTableButton:hover,
+#modScreen:hover,
+#openNav:hover {
+  box-shadow: 0 0 10px 2px var(--foreground-color);
+}
+
+#newTableButton {
+  right: 10px;
+  bottom: 70px;
+  width: 50px;
+  height: 50px;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+#newTableButton svg,
+#openNav svg {
+  transition: transform 500ms;
+}
+
+#newTableButton:hover svg {
+  transform: rotate(-90deg);
+}
+
+#modScreen {
+  bottom: 20px;
+  width: max-content;
+  padding: 4px;
+  border-radius: 30px 20px 20px 30px;
+}
+
+#openNav {
+  right: 0;
+  bottom: 140px;
+  width: 60px;
+  height: 50px;
+  justify-content: center;
+  border: 0;
+  border-radius: 20px 0 0 20px;
+}
+
+#openNav:hover svg {
+  transform: rotate(-30deg);
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 20px;
+  margin-right: 5px;
+}
+
+.switch input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.slider {
+  position: absolute;
+  inset: 0;
+  border: 1px solid white;
+  background-color: var(--background-color);
+  transition: background-color 400ms;
+}
+
+.slider::before {
+  position: absolute;
+  bottom: 1px;
+  left: 1px;
+  width: 16px;
+  height: 16px;
+  background-color: white;
+  content: '';
+  transition: transform 400ms;
+}
+
+.switch input:checked + .slider {
+  background-color: var(--background-color-secondary);
+}
+
+.switch input:checked + .slider::before {
+  transform: translateX(20px);
+}
+
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round::before {
+  border-radius: 50%;
+}
+
+.screen-mode #newTableButton,
+.screen-mode #openNav {
+  right: -70px;
+}
+
+.screen-mode .dot:not(.actif) {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.screen-mode .addColumnButton {
+  height: 0;
+  overflow: hidden;
+  border-color: transparent;
+}
+
+.screen-mode .table {
+  padding-bottom: 0;
+}
+
+#openNav[aria-expanded='true'] svg {
+  transform: rotate(-180deg);
+}
+
+#openNav[aria-expanded='true']:hover svg {
+  transform: rotate(-150deg);
+}

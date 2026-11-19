@@ -1,0 +1,156 @@
+:root {
+  --background-color: #130d2b;
+  --background-color-secondary: #161031;
+  --foreground-color: #fff;
+  --main-color: red;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  overflow: hidden;
+  position: relative;
+  background-color: var(--background-color);
+  color: var(--foreground-color);
+}
+
+main {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+nav {
+  display: grid;
+  grid-template-columns: 298px;
+  grid-auto-rows: 50px;
+  align-content: start;
+  gap: 5px;
+  width: 0;
+  min-width: 0;
+  height: 100vh;
+  flex-shrink: 0;
+  padding: 0;
+  overflow: hidden;
+  border-left: 1px solid white;
+  transition: width 500ms, padding 500ms;
+}
+
+nav.nav-open {
+  width: 320px;
+  padding: 10px;
+}
+
+button {
+  color: var(--foreground-color);
+  background-color: var(--background-color-secondary);
+  border: 1px solid white;
+  cursor: pointer;
+  user-select: none;
+}
+
+button:active {
+  border-color: gray;
+}
+
+button:focus-visible,
+input:focus-visible {
+  outline: none;
+  border-width: 3px !important;
+}
+
+.file-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+.dialog-overlay {
+  position: fixed;
+  z-index: 999;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: #0009;
+}
+
+.dialog {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: min(420px, calc(100vw - 32px));
+  padding: 16px;
+  border: 1px solid white;
+  border-radius: 6px;
+  background: var(--background-color);
+  text-align: center;
+}
+
+.dialog h2,
+.dialog p {
+  margin: 0;
+}
+
+.dialog input {
+  padding: 8px;
+  border: 1px solid white;
+  border-radius: 5px;
+  background: var(--background-color-secondary);
+  color: white;
+}
+
+.dialog button {
+  align-self: center;
+  padding: 8px 18px;
+  border-radius: 24px;
+}
+
+.notification {
+  position: fixed;
+  z-index: 1001;
+  top: -50px;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 14px;
+  border: 1px solid white;
+  border-radius: 100px;
+  background: var(--background-color-secondary);
+  transform: translateX(-50%);
+  transition: top 500ms;
+  pointer-events: none;
+}
+
+.notification svg {
+  flex: 0 0 auto;
+}
+
+.notification span {
+  white-space: nowrap;
+}
+
+.notification-visible {
+  top: 10px;
+}
+
+@media (max-width: 480px) {
+  nav.nav-open {
+    width: min(260px, 70vw);
+  }
+
+  nav {
+    grid-template-columns: 218px;
+  }
+}
