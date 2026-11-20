@@ -11,6 +11,9 @@
   },
   "dependencies": {
     "@getpapillon/papicons": "^0.2.3",
+    "@radix-ui/react-context-menu": "^2.4.1",
+    "@tabler/icons-react": "^3.52.0",
+    "html-to-image": "^1.11.13",
     "react": "^19.3.1",
     "react-dom": "^19.3.1"
   },

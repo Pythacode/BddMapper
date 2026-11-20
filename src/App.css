@@ -29,6 +29,7 @@ main {
 }
 
 nav {
+  position: relative;
   display: grid;
   grid-template-columns: 298px;
   grid-auto-rows: 50px;
@@ -38,10 +39,22 @@ nav {
   min-width: 0;
   height: 100vh;
   flex-shrink: 0;
-  padding: 0;
   overflow: hidden;
   border-left: 1px solid white;
   transition: width 500ms, padding 500ms;
+}
+
+nav .info {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  left: 10px;
+  color: gray;
+  font-size: 0.8rem;
+  text-align: center;
+  & a {
+    color: inherit;
+  }
 }
 
 nav.nav-open {

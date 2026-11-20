@@ -37,7 +37,15 @@ function readSavedSchema() {
 
 export function useSchema() {
   const [schema, setSchema] = useState(readSavedSchema)
+  
+  function getLastTableId() {
+      return schema.tables.at(-1)?.id ?? -1
+  }
 
+  const getTableById = (tableId) => schema.tables.find(function hasTableName(item) {
+      return item.id === tableId
+    })
+  
   function addTable(table) {
     setSchema(function addTableToCurrentSchema(currentSchema) {
       const tableAlreadyExists = currentSchema.tables.some(function hasTableName(item) {
@@ -49,15 +57,63 @@ export function useSchema() {
 
       return {
         ...currentSchema,
-        tables: [...currentSchema.tables, { ...table, column: table.column ?? [] }],
+        tables: [...currentSchema.tables, { id: getLastTableId() + 1, ...table, column: table.column ?? [] }],
       }
     })
   }
 
-  function moveTable(name, x, y) {
+  function renameTable(id, newName) {
+    setSchema(function (currentSchema) {
+      const table = getTableById(id)
+
+      if (!table) {
+        return currentSchema
+      }
+
+      const tableAlreadyExists = currentSchema.tables.some(function hasTableName(item) {
+        return item.name === newName
+      })
+
+      if (tableAlreadyExists) {
+        return currentSchema
+      }
+
+      const updatedTables = currentSchema.tables.map(function updateTableName(item) {
+        return item.id === id ? { ...item, name: newName } : item
+      })
+
+      return {
+        ...currentSchema,
+        tables : updatedTables
+      }
+    })
+  }
+
+  function removeTable(id) {
+    setSchema(function removeTableFromCurrentSchema(currentSchema) {
+      const tableAnchorPrefix = `table-${id}-`
+
+      const remainingTables = currentSchema.tables.filter((table) => {
+        return table.id !== id
+      })
+
+      const remainingLinks = currentSchema.links.filter((link) => {
+        return !link.start.startsWith(tableAnchorPrefix)
+          && !link.end.startsWith(tableAnchorPrefix)
+      })
+
+      return {
+        ...currentSchema,
+        tables: remainingTables,
+        links: remainingLinks
+      }
+    })
+  }
+
+  function moveTable(id, x, y) {
     setSchema(function moveTableInCurrentSchema(currentSchema) {
       const updatedTables = currentSchema.tables.map(function updateTablePosition(table) {
-        if (table.name !== name) {
+        if (table.id !== id) {
           return table
         }
 
@@ -68,10 +124,10 @@ export function useSchema() {
     })
   }
 
-  function addColumn(name, column) {
+  function addColumn(tableId, column) {
     setSchema(function addColumnToCurrentSchema(currentSchema) {
       const updatedTables = currentSchema.tables.map(function updateTableColumns(table) {
-        if (table.name !== name || table.column.includes(column)) {
+        if (table.id !== tableId || table.column.includes(column)) {
           return table
         }
 
@@ -85,7 +141,7 @@ export function useSchema() {
   function addLink(link) {
     setSchema(function addLinkToCurrentSchema(currentSchema) {
       const linkAlreadyExists = currentSchema.links.some(function isSameLink(item) {
-        return item.start === link.start && item.end === link.end
+        return (item.start === link.start && item.end === link.end) || (item.start == link.end && item.end == link.start)
       })
       if (linkAlreadyExists) {
         return currentSchema
@@ -98,9 +154,11 @@ export function useSchema() {
   function removeLink(start, end) {
     setSchema(function removeLinkFromCurrentSchema(currentSchema) {
       const remainingLinks = currentSchema.links.filter(function keepOtherLinks(link) {
+        console.log(start, end, link, !(link.start === start && link.end === end))
         return !(link.start === start && link.end === end)
       })
-
+      console.log('Lien restnt', remainingLinks);
+      
       return { ...currentSchema, links: remainingLinks }
     })
   }
@@ -124,7 +182,10 @@ export function useSchema() {
 
   return {
     schema,
+    getTableById,
     addTable,
+    renameTable,
+    removeTable,
     moveTable,
     addColumn,
     addLink,

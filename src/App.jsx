@@ -2,16 +2,20 @@ import { useRef, useState } from 'react'
 import Button from './components/Button/Button'
 import Zone from './components/Zone/Zone'
 import ZoneButton from './components/ZoneButton/ZoneButton'
-import { AlertCircle, Archive, Login, Logout } from '@getpapillon/papicons'
+import { AlertCircle, Archive, Login, Logout, Trash } from '@getpapillon/papicons'
 import { useSchemaStore } from './context/SchemaContext'
 import './App.css'
 
 function App() {
   const {
     schema,
+    getTableById,
     addTable,
+    renameTable,
+    removeTable,
     addColumn,
     save,
+    resetSchema,
     eraseSave,
     importJSON,
   } = useSchemaStore()
@@ -20,7 +24,9 @@ function App() {
   const [dialog, setDialog] = useState(null)
   const [screenMode, setScreenMode] = useState(false)
   const [navOpen, setNavOpen] = useState(false)
-  const [notification, setNotification] = useState('')
+  const [notificationText, setNotificationText] = useState('')
+  const [notificationVisible, setNotificationVisible] = useState(false)
+  const [notificationIconColor, setNotificationIconColor] = useState('white')
 
   function showAlert(title, message = '') {
     setDialog({ type: 'alert', title, message })
@@ -40,40 +46,46 @@ function App() {
         showAlert('Nom déjà utilisé', 'Une table porte déjà ce nom.')
         return
       }
-      addTable({ name, x: '50px', y: '50px', column: [] })
+      addTable({ name, x: 50, y: 50, column: [] })
     }
 
     showPrompt('Nouvelle table', 'Entrez le nom de la nouvelle table', addTableWithName)
   }
 
-  function createColumn(tableName) {
+  function renameTableWithId(id) {
+    showPrompt('Renomer une table', 'Entrer le nouveau nom de la table', (v) => renameTable(id, v))
+  }
+
+  function createColumn(tableId) {
     function addColumnWithName(name) {
       if (!name) return
 
-      const table = schema.tables.find(function hasTableName(item) {
-        return item.name === tableName
-      })
+      const table = getTableById(tableId)
+
       if (table?.column.includes(name)) {
         showAlert('Nom déjà utilisé', 'Cette colonne existe déjà dans cette table.')
         return
       }
-      addColumn(tableName, name)
+      addColumn(tableId, name)
     }
 
     showPrompt(
       'Nouvelle colonne',
-      `Entrez le nom de la colonne pour ${tableName}`,
+      `Entrez le nom de la colonne pour ${tableId}`,
       addColumnWithName,
     )
   }
 
-  function notify(message) {
-    setNotification(message)
+  function notify(message, color="white") {
+    setNotificationText(message)
+    setNotificationVisible(true)
+    setNotificationIconColor(color)
     window.setTimeout(clearNotification, 5000)
   }
 
   function clearNotification() {
-    setNotification('')
+    setNotificationVisible(false)
+    window.setTimeout(500, () => setNotificationText(''))
   }
 
   function exportJSON() {
@@ -173,7 +185,7 @@ function App() {
   return (
     <>
       <main className={screenMode ? 'screen-mode' : ''}>
-        <Zone onAddColumn={createColumn} onNotify={notify}>
+        <Zone onAddColumn={createColumn} onRenameTable={renameTableWithId} onRemoveTable={removeTable} onNotify={notify}>
           <ZoneButton
             onAddTable={createTable}
             screenMode={screenMode}
@@ -187,7 +199,17 @@ function App() {
         <Button text="Exporter les données" Icon={Logout} onClick={exportJSON} style="rotate" />
         <Button text="Importer des données" Icon={Login} onClick={openFilePicker} style="-rotate" />
         <Button text="Enregistrer dans le navigateur" Icon={Archive} onClick={handleSave} />
-        <Button text="Effacer la sauvegarde du navigateur" Icon={AlertCircle} onClick={handleEraseSave} />
+        <Button text="Effacer la sauvegarde du navigateur" Icon={Trash} IconColor='red' onClick={handleEraseSave} />
+        <div className="info">
+          <p>Faites un clic droit sur le nom d’une table pour la renommer ou la supprimer.</p>
+          <p>
+            Icônes :
+            {' '}
+            <a href="https://github.com/PapillonApp/papicons" target="_blank" rel="noreferrer">Papicons</a>
+            {' et '}
+            <a href="https://tabler.io/icons" target="_blank" rel="noreferrer">Tabler Icons</a>.
+          </p>
+        </div>
       </nav>
       <input
         ref={fileInputRef}
@@ -218,9 +240,9 @@ function App() {
           </section>
         </div>
       )}
-      <div className={`notification${notification ? ' notification-visible' : ''}`} role="status">
-        <AlertCircle size={20} color="white" aria-hidden="true" />
-        <span>{notification}</span>
+      <div className={`notification${notificationVisible ? ' notification-visible' : ''}`} role="status">
+        <AlertCircle size={20} color={notificationIconColor} aria-hidden="true" />
+        <span>{notificationText}</span>
       </div>
     </>
   )

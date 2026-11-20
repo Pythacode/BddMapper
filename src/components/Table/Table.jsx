@@ -1,13 +1,16 @@
 import { memo, useRef, useState } from 'react'
 import './Table.css'
+import Menu from '../Menu/Menu'
+import { IconKey } from '@tabler/icons-react'
 
-function Table({ table, onMove, onLinkStart, onAddColumn, activeAnchors }) {
+
+function Table({ table, onMove, onLinkStart, onAddColumn, activeAnchors, onRename, onRemove }) {
   const ref = useRef(null)
   const drag = useRef(null)
   const [dragging, setDragging] = useState(false)
 
   function handlePointerDown(event) {
-    if (event.target.closest('.button')) {
+    if (event.button !== 0 || event.target.closest('.button')) {
       return
     }
 
@@ -31,15 +34,9 @@ function Table({ table, onMove, onLinkStart, onAddColumn, activeAnchors }) {
 
     const zone = ref.current.parentElement
     const { offsetX, offsetY, zoneRect } = drag.current
-    const x = Math.max(0, Math.min(
-      event.clientX - zoneRect.left - offsetX,
-      zone.clientWidth - ref.current.offsetWidth,
-    ))
-    const y = Math.max(0, Math.min(
-      event.clientY - zoneRect.top - offsetY,
-      zone.clientHeight - ref.current.offsetHeight,
-    ))
-    onMove(table.name, `${x}px`, `${y}px`)
+    const x = event.clientX - zoneRect.left - offsetX
+    const y = event.clientY - zoneRect.top - offsetY
+    onMove(table.id, x, y)
   }
 
   function handlePointerUp() {
@@ -53,12 +50,13 @@ function Table({ table, onMove, onLinkStart, onAddColumn, activeAnchors }) {
   }
 
   function renderColumn(column) {
-    const before = `column-${table.name}-${column}-before`
-    const after = `column-${table.name}-${column}-after`
+    const before = `table-${table.id}-${column}-before`
+    const after = `table-${table.id}-${column}-after`
 
     return (
       <div key={column} className="table-column">
         {column}
+        <IconKey size={16} stroke={1.5} color="black" fill="#D4AF37" />
         <button
           type="button"
           className={`dot before button${activeAnchors.has(before) ? ' actif' : ''}`}
@@ -84,20 +82,26 @@ function Table({ table, onMove, onLinkStart, onAddColumn, activeAnchors }) {
   }
 
   function handleAddColumnClick() {
-    onAddColumn(table.name)
+    onAddColumn(table.id)
   }
 
   return (
     <div
       ref={ref}
       className={`table${dragging ? ' actif' : ''}`}
-      style={{ left: table.x || '50px', top: table.y || '50px' }}
+      style={{ left: table.x + "px" || '50px', top: table.y + "px" || '50px' }}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
       onPointerCancel={handlePointerUp}
+      id={'table-' + table.id}
     >
-      <h1 className="tableName">{table.name}</h1>
+      <Menu items={[
+          { label: "Renomer", onClick: () => onRename(table.id) },
+          { separator: true, label: "Suprimer", onClick: () => onRemove(table.id)}
+      ]}>
+        <h1 className="tableName">{table.name}</h1>
+      </Menu>
       {table.column.map(renderColumn)}
       <button type="button" className="addColumnButton button" onClick={handleAddColumnClick}>
         +

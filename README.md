@@ -1,5 +1,12 @@
 # BddMapper
 
+> [!NOTE]
+> J'ai commencé ce projet en web vanilla, puis, au bout d'un jour de code, j'ai migré vers du Réact. Comme j'y connaisait rien, j'ai demandé à une IA de porter le projet. Si cette version est en prod, c'est que j'ai reussi à comprendre le code et à le modifier, donc tous vas bien !
+> Bon par contre je vais prendre des cours de poteries je pense... 
+>
+> Plus serieusement, ce projet n'a pas voquation à être vibe-codé !
+
+
 Application React pour créer et modifier un schéma de base de données.
 
 ## Lancer l’application

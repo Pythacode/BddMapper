@@ -4,11 +4,52 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script defer src="https://statistiques.nathanaelle.org/script.js" data-website-id="09c067d3-6726-4b8a-bc33-e8dec317c79c"></script>
+    <meta
+      name="description"
+      content="Créez et modifiez facilement des schémas de bases de données. Ajoutez des tables, des colonnes et visualisez leurs relations avec BddMapper."
+    />
     <meta name="theme-color" content="#130d2b" />
-    <title>BddMapper</title>
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:site_name" content="BddMapper" />
+    <meta property="og:title" content="BddMapper — Schémas de bases de données" />
+    <meta
+      property="og:description"
+      content="Créez et modifiez facilement des schémas de bases de données, avec leurs tables, colonnes et relations."
+    />
+    <title>BddMapper — Schémas de bases de données</title>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div>
+        Veuillez patienter, site en cours de chargement.
+        <br>
+        Si celui-ci ne charge pas, activez le JavaScript
+        <style>
+          html,
+          body,
+          #root {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            background-color: #130d2b;
+            color: white;
+          }
+
+          #root {
+            flex-direction: column;
+          }
+
+          body div {
+            display: flex;
+            align-items: center;
+            height: 100%;
+            text-align: center;
+          }
+        </style>
+      </div>
+    </div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
