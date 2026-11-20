@@ -1,8 +1,6 @@
 import { memo, useRef, useState } from 'react'
 import './Table.css'
 import Menu from '../Menu/Menu'
-import { IconKey } from '@tabler/icons-react'
-
 
 function Table({ table, onMove, onLinkStart, onAddColumn, activeAnchors, onRename, onRemove }) {
   const ref = useRef(null)
@@ -56,7 +54,6 @@ function Table({ table, onMove, onLinkStart, onAddColumn, activeAnchors, onRenam
     return (
       <div key={column} className="table-column">
         {column}
-        <IconKey size={16} stroke={1.5} color="black" fill="#D4AF37" />
         <button
           type="button"
           className={`dot before button${activeAnchors.has(before) ? ' actif' : ''}`}
