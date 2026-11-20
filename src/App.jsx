@@ -47,6 +47,7 @@ function App() {
         return
       }
       addTable({ name, x: 50, y: 50, column: [] })
+      window.umami?.track('table_created')
     }
 
     showPrompt('Nouvelle table', 'Entrez le nom de la nouvelle table', addTableWithName)
@@ -67,6 +68,7 @@ function App() {
         return
       }
       addColumn(tableId, name)
+      window.umami?.track('column_created')
     }
 
     showPrompt(
@@ -105,6 +107,7 @@ function App() {
       URL.revokeObjectURL(url)
     }
     window.setTimeout(releaseDownloadUrl, 0)
+    window.umami?.track('exportData')
   }
 
   async function handleImport(event) {
@@ -115,6 +118,7 @@ function App() {
     try {
       importJSON(JSON.parse(await file.text()))
       notify('Données importées.')
+      window.umami?.track('importData')
     } catch (error) {
       showAlert('Import impossible', error.message)
     }
@@ -124,6 +128,7 @@ function App() {
     try {
       save()
       notify('Sauvegardé dans le navigateur.')
+      window.umami?.track('saveData')
     } catch (error) {
       showAlert('Enregistrement impossible', error.message)
     }
@@ -133,6 +138,7 @@ function App() {
     try {
       eraseSave()
       notify('Sauvegarde effacée.')
+      window.umami?.track('eraseSave')
     } catch (error) {
       showAlert('Effacement impossible', error.message)
     }
@@ -150,10 +156,12 @@ function App() {
 
   function toggleScreenMode() {
     setScreenMode(!screenMode)
+    window.umami?.track('toggleScreenMode')
   }
 
   function toggleNavigation() {
     setNavOpen(!navOpen)
+    window.umami?.track('toggleNavigation')
   }
 
   function openFilePicker() {
