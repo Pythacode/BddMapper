@@ -213,7 +213,7 @@ function App() {
           <p>
             Icônes :
             {' '}
-            <a href="https://github.com/PapillonApp/papicons" target="_blank" rel="noreferrer">Papicons</a>
+            <a href="https://icons.papillon.bzh/" target="_blank" rel="noreferrer">Papicons</a>
             {' et '}
             <a href="https://tabler.io/icons" target="_blank" rel="noreferrer">Tabler Icons</a>.
           </p>
